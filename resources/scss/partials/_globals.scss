@@ -1,0 +1,29 @@
+*{
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--website-bg-color);
+    margin: 0rem;
+}
+
+img{
+    max-width: 100%;
+    height: auto;
+}
+
+.icon {
+    filter: var(--icon-color);
+}
+
+.error {
+    color: var(--error-message);
+}
+
+.success {
+    color: var(--success-message);
+}
+
+.border {
+    border-radius: var(--main-radius);
+}

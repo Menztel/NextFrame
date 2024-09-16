@@ -45,7 +45,13 @@
                 <span class="side-text">Mes informations</span>
             </a>
         </div>
-
+        <!-- Bouton pour exporter la solution -->
+        <div class="side-item">
+            <a href="/dashboard/export" class="side-link">
+                <span class="side-icon">&#128228;</span>
+                <span class="side-text">Exporter la solution</span>
+            </a>
+        </div>
         <div class="logout-section side-item">
             <hr>
             <a href="/dashboard/logout" class="side-link">

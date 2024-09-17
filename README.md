@@ -1,4 +1,4 @@
-# NextMaker - ALLAIN Maheanuu, PENA Loan, LABALETTE-CARON Jérémy
+# NextFrame - ALLAIN Maheanuu, PENA Loan, LABALETTE-CARON Jérémy
 
 Ce projet vise à fournir un outil complet pour la création et la gestion de sites vitrines.
 Développé à partir de zéro en utilisant PHP8, ce CMF (Content Management Framework) se base sur le design pattern MVC pour offrir flexibilité et personnalisation à travers un moteur de templating personnalisé et l'intégration d'un framework de composants SASS.

@@ -159,3 +159,7 @@
 /user/comment:
   controller: Comment
   action: create
+
+/dashboard/export:
+  controller: Export
+  action: generate

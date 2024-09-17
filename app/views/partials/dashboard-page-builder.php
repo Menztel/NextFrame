@@ -24,6 +24,7 @@
             <button class="Button-back-office btn-create-page" type="submit">Nouvelle page</button>
         </form>
     </div>
+    
 
     <div class="page-list-search">
         <input id="searchInput" type="text" placeholder="Nom de votre page">

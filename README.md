@@ -14,6 +14,7 @@ Développé à partir de zéro en utilisant PHP8, ce CMF (Content Management Fra
 #### Étapes 1 :
 - Exécuter dans le dossier "app" : "composer install"
 - Exécuter dans le dossier "resources" : "npm i"
+- Exécuter dans le dossier "resources" : "npm run build"
 
 #### Étapes 2 :
 - Exécuter le docker compose via : Docker compose up (-d pour mettre en background)

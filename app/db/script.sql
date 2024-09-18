@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS articles CASCADE;
 DROP TABLE IF EXISTS categories CASCADE;
 DROP TABLE IF EXISTS comments CASCADE;
 DROP TABLE IF EXISTS pages CASCADE;
+DROP TABLE IF EXISTS menu CASCADE; -- Ajout pour la table menu
 
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
@@ -72,6 +73,21 @@ CREATE TABLE pages (
     FOREIGN KEY (id_updator) REFERENCES users(id)
 );
 
+-- Création de la table menu
+CREATE TABLE menu (
+    id SERIAL PRIMARY KEY,
+    label VARCHAR(100) NOT NULL,
+    url VARCHAR(255) NOT NULL,
+    id_page INT DEFAULT NULL, -- Lien vers la table des pages
+    parent_id INT DEFAULT NULL, -- Pour gérer les sous-menus
+    position INT NOT NULL, -- Pour l'ordre d'affichage
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL,
+    FOREIGN KEY (id_page) REFERENCES pages(id), -- Lien vers la page
+    FOREIGN KEY (parent_id) REFERENCES menu(id) -- Clé étrangère pour les sous-menus
+);
+
+-- Ajout des catégories par défaut
 INSERT INTO categories (label) VALUES
 ('Musique'),
 ('Peinture'),

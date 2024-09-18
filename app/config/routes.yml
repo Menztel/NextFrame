@@ -163,3 +163,21 @@
 /dashboard/export:
   controller: Export
   action: generate
+
+/dashboard/menu:
+  controller: Menu
+  action: showAll
+
+/dashboard/menu/save:
+  controller: Menu
+  action: save
+
+/dashboard/menu/delete:
+  controller: Menu
+  action: delete
+
+/dashboard/menu/block:
+  controller: Menu
+  action: getMenuJson
+
+

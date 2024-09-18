@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\Page;
 use App\Controllers\Error;
+use App\Models\Menu;
 
 class PageBuilder
 {
@@ -54,8 +55,18 @@ class PageBuilder
             $Page->setMetaDescription($meta_description);
             $Page->save();
 
-            header('Content-Type: application/json');
-            echo json_encode(["success" => true, "message" => "Page saved successfully"]);
+            $pageId = $Page->getId();
+            error_log("Page ID after save: " . $pageId);
+
+            if ($pageId) {
+                $this->addToMenu($pageId, $title, $url);
+                header('Content-Type: application/json');
+                echo json_encode(["success" => true, "message" => "Page saved successfully"]);
+            } else {
+                header('Content-Type: application/json');
+                http_response_code(500);
+                echo json_encode(["success" => false, "message" => "Error saving page, no ID found"]);
+            }
         } else {
             header('Content-Type: application/json');
             http_response_code(400);
@@ -63,12 +74,62 @@ class PageBuilder
         }
     }
 
+
+    private function addToMenu(int $pageId, string $title, string $url): void
+    {
+        error_log("addToMenu - ID Page: $pageId, Titre: $title, URL: $url");
+
+        $menu = new Menu();
+        
+        $existingMenu = $menu->getOneBy(['id_page' => $pageId]);
+
+        if ($existingMenu) {
+            
+            $menu->setId($existingMenu['id']);
+            $menu->setLabel($title);  
+            $menu->setUrl($url);      
+            $menu->setIdPage($pageId);
+            $menu->setUpdatedAt(date('Y-m-d H:i:s')); 
+        } else {
+            
+            $menu->setLabel($title);  
+            $menu->setUrl($url);      
+            $menu->setIdPage($pageId);
+            $menu->setPosition($this->getNextMenuPosition());
+        }
+
+        error_log("Enregistrement du menu - Label: {$menu->getLabel()}, URL: {$menu->getUrl()}");
+        $menu->save();
+        error_log("Menu enregistré en base");
+    }
+
+
+
+
+    private function getNextMenuPosition(): int
+    {
+        $menuModel = new Menu();
+        $lastMenuItem = $menuModel->getLastMenuItem();
+        $position = $lastMenuItem ? $lastMenuItem['position'] + 1 : 1; 
+
+        error_log("Prochaine position du menu: $position");
+        return $position;
+    }
+
+
+
+
     // Permet de supprimer une page en fonction de son id
     public function deletePage(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_POST["id-page"])) {
                 $id = $_POST["id-page"];
+                
+                // Supprimer d'abord les entrées du menu qui se réfèrent à cette page
+                $menu = new Menu();
+                $menu->deleteAllBy(['id_page' => $id]);
+
                 // Supprime la page
                 $Page = new Page();
                 $Page->delete($id);
@@ -77,16 +138,17 @@ class PageBuilder
                     session_start();
                 }
 
-                // vérifie si la page a bien été supprimée et affiche un message en conséquence
+                // Vérifie si la page a bien été supprimée et affiche un message en conséquence
                 if (!empty($Page->getOneBy(["id" => $id]))) {
                     $_SESSION['error_message'] = "La page n'a pas été supprimée";
                 } else {
-                    $_SESSION['success_message'] = "La page a été supprimée";
+                    $_SESSION['success_message'] = "La page a été supprimée avec succès";
                 }
             }
             header('Location: /dashboard/page-builder');
         }
     }
+
 
     // Met à jour le sitemap automatiquement
     private function updateSiteMap() : void

@@ -19,6 +19,7 @@ class DB
         'Comment' => 'comments',
         'Article' => 'articles',
         'Category' => 'categories',
+        'Menu' => 'menu',
     ];
     private string $tableName = '';
     private static ?self $instance = null;
@@ -275,5 +276,11 @@ class DB
         unset($data['tableName']);
         return $data;
     }
+
+    public function getLastInsertId(): int
+    {
+        return (int) $this->pdo->lastInsertId();
+    }
+
 }
 

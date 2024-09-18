@@ -23,6 +23,31 @@ document.addEventListener("DOMContentLoaded", function () {
     },
   });
 
+  editor.DomComponents.addType('menu', {
+    isComponent: el => el.tagName === 'NAV', 
+    model: {
+      defaults: {
+        tagName: 'nav',
+        classes: ['menu-component'],
+        droppable: false, 
+        traits: [
+          {
+            type: 'text',
+            label: 'Menu Label',
+            name: 'label',
+            changeProp: 1
+          },
+          {
+            type: 'text',
+            label: 'URL',
+            name: 'url',
+            changeProp: 1
+          }
+        ]
+      },
+    },
+  });
+
   // bouton de sauvegarde personnalisé
   editor.Panels.addButton("options", [
     {
@@ -182,6 +207,42 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 
+  editor.Blocks.add("menuBlock", {
+    label: "Menus",  
+    attributes: { class: "fa fa-bars" }, 
+    content: {
+      type: "menu",
+      tagName: "nav",
+      style: { padding: "10px", background: "#f9f9f9", display: "block" },
+      script: function () {
+        fetch("/dashboard/menu/block")
+          .then((response) => response.json())
+          .then((menus) => {
+            if (menus.length > 0) {
+              this.innerHTML = menus
+                .map(
+                  (menu) => `
+                  <div class="menu-item">
+                    <a href="${menu.page_url ? menu.page_url : menu.url}">
+                      ${menu.page_title ? menu.page_title : menu.label}
+                    </a>
+                  </div>`
+                )
+                .join("");
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching menus: ", error);
+          });
+      },
+    },
+    category: "Autres",
+  });
+
+  
+  
+  
+
   editor.Commands.add("save-db", {
     run: function (editor, sender) {
       sender && sender.set("active", false); // Désactive le bouton après l'avoir cliqué
@@ -208,7 +269,6 @@ document.addEventListener("DOMContentLoaded", function () {
       modal.setContent(modalContent);
       modal.open();
 
-      // Ajoute un gestionnaire d'événement pour le bouton de sauvegarde
       document
         .getElementById("save-page-info")
         .addEventListener("click", function () {
@@ -232,7 +292,14 @@ document.addEventListener("DOMContentLoaded", function () {
           formData.append("css", css);
           formData.append("meta_description", meta_description);
 
-          // Envoie des données au serveur
+          console.log("Données envoyées: ", {
+            url,
+            title,
+            html,
+            css,
+            meta_description,
+          });
+          
           fetch("/dashboard/page-builder/create-page/save", {
             method: "POST",
             body: formData,

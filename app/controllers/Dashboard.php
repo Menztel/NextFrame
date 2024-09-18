@@ -8,6 +8,7 @@ use App\Controllers\Article;
 use App\Controllers\Comment;
 use App\Controllers\User;
 use App\Controllers\Dataviz;
+use App\Controllers\Menu; 
 
 use App\Models\Article as ArticleModel;
 use App\Models\Category;
@@ -32,6 +33,7 @@ class Dashboard
         $Comment = new Comment();
         $User = new User();
         $Dataviz = new Dataviz();
+        $menuController = new Menu(); // Instance du contrôleur Menu
 
         switch ($_SERVER['REQUEST_URI']) {
             case '/dashboard/page-builder':
@@ -64,18 +66,27 @@ class Dashboard
                 $components[] = 'dashboard-comment.php';
                 $comments = $Comment->showAll(); // Récupère tous les commentaires
                 break;
+
+            case '/dashboard/menu': // Gestion du menu dynamique
+                $components[] = 'dashboard-menu-management.php'; // Ajoute la vue pour la gestion des menus
+                $data = $menuController->showAll(); // Récupère tous les éléments de menu
+                break;
+
             case '/dashboard/user':
                 $components[] = 'dashboard-user-data.php';
                 break;
+
             case '/dashboard/list-users':
                 $components[] = 'dashboard-list-users.php';
                 $data = $User->showAll(); // Récupère tous les utilisateurs
                 break;
+                
             default:
                 $components[] = 'dashboard-page-builder.php';
                 $data = $pageBuilder->pageList(); // Récupère toutes les pages
                 break;
         }
+
         // Si l'utilisateur est connecté, on affiche le back-office sinon on affiche une erreur 403
         if (isset($_SESSION['user'])) {
             if ($_SESSION['user']['role'] == "admin" || $_SESSION['user']['role'] == 'superadmin') {
@@ -85,6 +96,5 @@ class Dashboard
             $object = new Error();
             $object->error403();
         }
-
     }
 }

@@ -1,3 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>localhost/contact</loc>
+<lastmod>2024-09-18 13:12:16</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+<url>
+<loc>localhost/home</loc>
+<lastmod>2024-09-18 13:12:48</lastmod>
+<changefreq>monthly</changefreq>
+<priority>1</priority>
+</url>
 </urlset>

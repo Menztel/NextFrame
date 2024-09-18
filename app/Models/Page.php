@@ -19,6 +19,50 @@ Class Page extends DB
     protected ?string $updated_at;
     protected ?string $id_updator;
 
+    public function save(): void
+    {
+        if ($this->id) {
+            $sql = "UPDATE pages 
+                    SET url = :url, 
+                        title = :title, 
+                        html = :html, 
+                        css = :css, 
+                        meta_description = :meta_description, 
+                        updated_at = :updated_at 
+                    WHERE id = :id";
+
+            $params = [
+                'url' => $this->url,
+                'title' => $this->title,
+                'html' => $this->html,
+                'css' => $this->css,
+                'meta_description' => $this->meta_description,
+                'updated_at' => $this->updated_at,
+                'id' => $this->id,
+            ];
+
+            $this->exec($sql, $params);
+
+        } else {
+            $sql = "INSERT INTO pages (url, title, html, css, meta_description, id_creator, created_at) 
+                    VALUES (:url, :title, :html, :css, :meta_description, :id_creator, NOW())";
+
+            $params = [
+                'url' => $this->url,
+                'title' => $this->title,
+                'html' => $this->html,
+                'css' => $this->css,
+                'meta_description' => $this->meta_description,
+                'id_creator' => $this->id_creator,
+            ];
+
+            $this->exec($sql, $params);
+
+            $this->id = $this->getLastInsertId();
+        }
+    }
+
+
     public function getId(): ?int
     {
         return $this->id;

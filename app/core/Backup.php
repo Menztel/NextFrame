@@ -83,7 +83,7 @@ class Backup
     private function exportDatabase()
     {
         // Inclure le fichier Config.php pour avoir accès aux constantes
-        include_once $_SERVER['DOCUMENT_ROOT'] . '/../app/config/Config.php';
+        include_once $_SERVER['DOCUMENT_ROOT'] . '/../app/config/config.php';
 
         // Utilisation des constantes pour la base de données
         $database = DB_NAME;

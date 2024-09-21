@@ -42,7 +42,7 @@ class Installer
         }
 
         // Crée le fichier de configuration
-        file_put_contents('../app/config/Config.php', $configContent);
+        file_put_contents('../app/config/config.php', $configContent);
 
         $db = DB::getInstance();
         // Teste la connexion

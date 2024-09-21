@@ -6,7 +6,7 @@ use App\Core\DB;
 use App\Models\Page;
 use App\Controllers\Error;
 
-class home
+class Home
 {
     public function __construct()
     {
@@ -17,7 +17,7 @@ class home
     public function index(): void
     {
         if ($_SERVER["REQUEST_URI"] === "/") {
-            if (empty(file_get_contents(__DIR__ . "/../config/Config.php"))) {
+            if (empty(file_get_contents(__DIR__ . "/../config/config.php"))) {
                 include __DIR__ . "/../Views/front-office/main/home.php";
             }
             else {

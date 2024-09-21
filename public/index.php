@@ -63,7 +63,7 @@ if (!empty ($listOfRoutes[$uri])) {
         return;
     }
     else if (empty($listOfRoutes[$uri])) { // si la route n'existe pas
-        include "../app/controllers/Error.php";
+        include "../app/Controllers/Error.php";
         $object = new Controllers\Error();
         $object->error404();
         return;

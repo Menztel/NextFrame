@@ -1,6 +1,6 @@
 <section class="content-layout">
     <div class="title">
-        <h2 class="heading heading-centered heading-sub">Nexaframe</h2><br>
+        <h2 class="heading heading-centered heading-sub">Nextframe</h2><br>
         <h1 class="heading heading-centered">Libérez votre potentiel créatif avec notre plateforme</h1>
         <p class="text text-centered">Notre plateforme offre une gamme de fonctionnalités conçues pour aider les artistes à présenter leur travail et vendre en ligne. Avec nos outils intuitifs et notre interface conviviale, vous pouvez facilement créer un portfolio professionnel et toucher un public plus large.</p>
     </div>

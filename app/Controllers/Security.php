@@ -50,10 +50,10 @@ class Security
 
                                     $mail->setFrom($mailConfig['from']['address'], $mailConfig['from']['name']);
                                     $mail->addAddress($email);
-                                    $mail->Subject = "Validation de votre compte Nexaframe";
+                                    $mail->Subject = "Validation de votre compte Nextframe";
                                     $mail->isHTML(true);
                                     $mail->Body = "Bonjour,
-                                    <br>Merci de vous être inscrit sur Nexaframe. Veuillez cliquer sur le lien suivant pour valider votre compte : <a href='http://localhost/user/validate?token=" . $user->getValidation_token() . "'>Valider mon compte</a>";
+                                    <br>Merci de vous être inscrit sur Nextframe. Veuillez cliquer sur le lien suivant pour valider votre compte : <a href='http://localhost/user/validate?token=" . $user->getValidation_token() . "'>Valider mon compte</a>";
                                     $mail->send();
                                 } catch (\Exception $e) {
                                     $message = "Erreur lors de l'envoi du mail de validation. Veuillez réessayer.";
@@ -81,59 +81,68 @@ class Security
 
     // Connexion d'un utilisateur
     public function login(): void
-    {
-        // Vérifie si la session est démarrée
-        if (!isset($_SESSION)) {
-            session_start();
-        }
+{
+    // Démarrer la session si elle n'est pas déjà démarrée
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
 
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $login = filter_input(INPUT_POST, "login", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-            $password = filter_input(INPUT_POST, "password", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $error = null;
+    $success = null;
 
-            if (empty($login) || empty($password)) {
-                $error = "Champs vides. Veuillez remplir tous les champs.";
-            }
+    // Vérifier si un message de succès est présent dans la session
+    if (isset($_SESSION['success'])) {
+        $success = $_SESSION['success'];
+        unset($_SESSION['success']); // Supprimer le message de la session
+    }
 
-            // Récupère l'utilisateur en fonction de son login
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $login = filter_input(INPUT_POST, "login", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $password = filter_input(INPUT_POST, "password", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+        if (empty($login) || empty($password)) {
+            $error = "Champs vides. Veuillez remplir tous les champs.";
+        } else {
             $user = new User();
             $loggedInUser = $user->getOneBy(["login" => $login]);
 
-            // Vérifie si l'utilisateur existe et si le mot de passe est correct
             if (empty($loggedInUser)) {
                 $error = "Nom d'utilisateur ou mot de passe incorrect";
             } else {
                 if ($loggedInUser && password_verify($password, $loggedInUser[0]['password'])) {
                     $user->populate($loggedInUser);
-                    // Vérifie si l'utilisateur est un administrateur ou un superadmin et si son compte est validé
-                    if ($user->getRole() == "admin" || $user->getRole() == "superadmin" && $user->isValidate() == true) {
+                    if (($user->getRole() == "admin" || $user->getRole() == "superadmin") && $user->isValidate() == true) {
                         $_SESSION['user'] = $loggedInUser[0];
                         if ($_SERVER['REQUEST_URI'] === '/installer/login') {
                             header('Location: /dashboard/page-builder');
                         } else {
                             header('Location: /');
                         }
+                        exit();
                     } else if ($user->getRole() == "user" && $user->isValidate() == true) {
                         $_SESSION['user'] = $loggedInUser[0];
                         header('Location: /home');
+                        exit();
                     }
                 } else {
-                    if ($_SERVER["REQUEST_URI"] == "/installer/login") {
-                        header('Location: /installer/login');
-                    } else {
-                        header('Location: /login');
-                    }
+                    $error = "Nom d'utilisateur ou mot de passe incorrect";
                 }
             }
         }
-
-        // Affiche la page de connexion en fonction de l'URL
-        if ($_SERVER['REQUEST_URI'] === '/installer/login') {
-            include __DIR__ . '/../Views/back-office/installer/installer_loginAdmin.php';
-        } else if ($_SERVER['REQUEST_URI'] === '/user/login' && isset($_SESSION['user'])) {
-            header('Location: /home');
-        }
     }
+
+    // Affiche la page de connexion en fonction de l'URL
+    if ($_SERVER['REQUEST_URI'] === '/installer/login') {
+        include __DIR__ . '/../Views/back-office/installer/installer_loginAdmin.php';
+    } else if ($_SERVER['REQUEST_URI'] === '/user/login' && isset($_SESSION['user'])) {
+        header('Location: /home');
+        exit();
+    } else {
+        // Inclure la vue de connexion par défaut si nécessaire
+        include __DIR__ . '/../Views/front-office/login.php';
+    }
+}
+
 
     // Déconnexion d'un utilisateur
     public function logout(): void
@@ -197,7 +206,7 @@ class Security
                 <br>
                 <br>Vous pouvez vous connecter à votre compte en cliquant sur le lien suivant : <a href='" . $url . "'>Se connecter</a>
                 <br><br>Cordialement,
-                <br>L'équipe Nexaframe.";
+                <br>L'équipe Nextframe.";
                     $mail->send();
 
                     $success = "Un nouveau mot de passe a été envoyé à votre adresse e-mail.";

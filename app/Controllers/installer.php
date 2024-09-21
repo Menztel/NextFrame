@@ -25,53 +25,59 @@ class Installer
 
     // exécute la migration de la base de données
     public function configDatabase(): void
-    {
-        //sécurité à faire ici pour éviter les injections SQL (htmlspecialchars, strip_tags, etc.)
-        $dbConfig = [
-            'DB_NAME' => htmlspecialchars(strip_tags($_POST['db_name'])),
-            'DB_USER' => htmlspecialchars(strip_tags($_POST['db_user'])),
-            'DB_PASSWORD' => htmlspecialchars(strip_tags($_POST['db_password'])),
-            'DB_HOST' => htmlspecialchars(strip_tags($_POST['db_host'])),
-            'DB_PORT' => filter_input(INPUT_POST, 'db_port', FILTER_SANITIZE_NUMBER_INT),
-            'DB_TYPE' => htmlspecialchars(strip_tags($_POST['db_type'])),
-        ];
+{
+    // Sécurité pour éviter les injections SQL
+    $dbConfig = [
+        'DB_NAME' => htmlspecialchars(strip_tags($_POST['db_name'])),
+        'DB_USER' => htmlspecialchars(strip_tags($_POST['db_user'])),
+        'DB_PASSWORD' => htmlspecialchars(strip_tags($_POST['db_password'])),
+        'DB_HOST' => htmlspecialchars(strip_tags($_POST['db_host'])),
+        'DB_PORT' => filter_input(INPUT_POST, 'db_port', FILTER_SANITIZE_NUMBER_INT),
+        // Définition statique du type de base de données
+        'DB_TYPE' => 'pgsql',
+    ];
 
-        $configContent = "<?php\n";
-        foreach ($dbConfig as $key => $value) {
-            $configContent .= "define('$key', '$value');\n";
-        }
+    $configContent = "<?php\n";
+    foreach ($dbConfig as $key => $value) {
+        $configContent .= "define('$key', '$value');\n";
+    }
 
+    // Chemin absolu pour le fichier de configuration
+    $configFilePath = __DIR__ . '/../config/config.php';
+    if (file_put_contents($configFilePath, $configContent) === false) {
+        die("Impossible d'écrire le fichier de configuration : " . $configFilePath);
+    }
 
-        $configFilePath = __DIR__ . '/../config/config.php';
-        if (file_put_contents($configFilePath, $configContent) === false) {
-            die("Impossible d'écrire le fichier de configuration : " . $configFilePath);
-        }
+    $db = DB::getInstance();
 
-        $db = DB::getInstance();
-        // Teste la connexion
-
-        if (!$db->testConnection()) {
-            $error = "Connexion échouée";
-            header('Location: /installer');
+    // Teste la connexion
+    if (!$db->testConnection()) {
+        $error = "Connexion échouée";
+        header('Location: /installer');
+    } else {
+        $user = new User();
+        if (!empty($user->getOneBy(["role" => "superadmin"]))) {
+            header('Location: /installer/login');
         } else {
-            $user = new User();
-            if (!empty($user->getOneBy(["role" => "superadmin"]))) {
-                header('Location: /installer/login');
+            if ($this->migrateDatabase($db)) {
+                header('Location: /installer/account');
             } else {
-                if ($this->migrateDatabase($db)) {
-                    header('Location: /installer/account');
-                } else {
-                    $error = "Database migration failed.";
-                    include __DIR__ . '/../Views/back-office/installer/installer_configBDD.php';
-                }
+                $error = "Échec de la migration de la base de données.";
+                include __DIR__ . '/../Views/back-office/installer/installer_configBDD.php';
             }
-
         }
     }
+}
+
 
     // Affiche la page d'inscription de l'administrateur
     public function createAdmin(): void
 {
+    // Démarrer la session si elle n'est pas déjà démarrée
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $login = trim(htmlspecialchars($_POST['login']));
         $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
@@ -87,7 +93,6 @@ class Installer
                     $message = "L'adresse email est déjà utilisée";
                 }
                 else {
-                    // Vérifie si les mots de passe correspondent et si le mot de passe contient au moins 8 caractères
                     if ($password == $confirmPassword) {
                         if (strlen($password) >= 8) {
                             $adminAcc = new User();
@@ -99,7 +104,7 @@ class Installer
 
                             $adminAcc->save();
 
-                            // Envoi d'un email de confirmation de compte à l'administrateur
+                            // Envoi de l'e-mail de confirmation
                             if (!empty($adminAcc->getOneBy(["role" => "superadmin"]))) {
                                 try {
                                     $mailConfig = include __DIR__ . "/../config/MailConfig.php";
@@ -138,7 +143,13 @@ class Installer
                             } else {
                                 $message = "Erreur lors de la création de l'administrateur";
                             }
+
+                            // Stocker le message de succès dans la session
+                            $_SESSION['success'] = "Un e-mail de confirmation vous a été envoyé. Veuillez vérifier votre boîte de réception pour confirmer votre compte.";
+
+                            // Rediriger vers la page de connexion
                             header('Location: /installer/login');
+                            exit();
                         } else {
                             $message = "Le mot de passe doit contenir au moins 8 caractères";
                         }
@@ -155,6 +166,7 @@ class Installer
     }
     include __DIR__ . "/../Views/back-office/installer/installer_registerAdmin.php";
 }
+
 
 
     // Pour la connexion à la bdd

@@ -38,4 +38,24 @@ class Home
             $Error->error404();
         }
     }
+
+    // Affiche la page de l'utilisateur
+    public function mypage($uri = ''): bool
+    {
+        $Page = new Page();
+        $Data = $Page->getAll();
+        $pageData = null;
+        foreach ($Data as $page) {
+            if ($page['url'] === $uri) {
+                $pageData = $page;
+                break;
+            }
+        }
+        if (!$pageData) {
+            return false;
+        } else {
+            include __DIR__ . '/../Views/front-office/page/page.php';
+            return true;
+        }
+    }
 }

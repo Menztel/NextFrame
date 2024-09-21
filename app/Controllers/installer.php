@@ -41,8 +41,11 @@ class Installer
             $configContent .= "define('$key', '$value');\n";
         }
 
-        // Crée le fichier de configuration
-        file_put_contents('../app/config/config.php', $configContent);
+
+        $configFilePath = __DIR__ . '/../config/config.php';
+        if (file_put_contents($configFilePath, $configContent) === false) {
+            die("Impossible d'écrire le fichier de configuration : " . $configFilePath);
+        }
 
         $db = DB::getInstance();
         // Teste la connexion

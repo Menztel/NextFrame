@@ -16,7 +16,7 @@
     <?php
 
     foreach ($components as $component) {
-        include $_SERVER['DOCUMENT_ROOT'] . '/../app/views/partials/' . $component;
+        include $_SERVER['DOCUMENT_ROOT'] . '/../app/Views/partials/' . $component;
     }
 
     ?>

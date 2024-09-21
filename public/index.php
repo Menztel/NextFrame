@@ -58,7 +58,7 @@ if (!empty ($listOfRoutes[$uri])) {
         die ("La route " . $uri . " ne possède pas de controller dans le ficher " . $fileRoute);
     }
 } else {
-    $myPage = new Controllers\home();
+    $myPage = new Controllers\Home();
     if ($myPage->mypage($uri)) {
         return;
     }

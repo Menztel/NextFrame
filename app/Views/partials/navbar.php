@@ -1,13 +1,10 @@
 <nav class="navbar">
     <div class="container">
         <div class="logo-container">
-          <a href="/">
-          <img class="icon logo" src="/assets/img/Nexaframe.png" alt="Brand Logo">
-          </a>
         </div>
         <ul class="navbar-links">
             <li>
-                <a href="/home">NexaFrame</a>
+                <a href="/home">NextFrame</a>
             </li>
         </ul>
         <a href="/installer" class="Button Primary">Commencer</a>

@@ -9,11 +9,11 @@
 <body>
     <section class="form-container">
         <form id="dbTestForm" action="/installer/process" method="post">
-        <?php if (isset($error)) { ?>
-            <p class="error">
-                <?= $error ?>
-            </p>
-        <?php } ?>
+            <?php if (isset($error)) { ?>
+                <p class="error">
+                    <?= $error ?>
+                </p>
+            <?php } ?>
             <h2>Configuration de votre base de données</h2>
             <div class="form-group">
                 <label for="dbHost">Hôte :</label>
@@ -35,14 +35,10 @@
                 <label for="dbPassword">Mot de Passe :</label>
                 <input type="password" id="dbPassword" name="db_password" placeholder="ex : root" required>
             </div>
+            <!-- Information statique sur le type de base de données -->
             <div class="form-group">
-                <label for="dbType">Type de Base de Données :</label>
-                <select id="dbType" name="db_type" required>
-                    <option value="mysql">MySQL</option>
-                    <option value="pgsql">PostgreSQL</option>
-                    <option value="sqlsrv">SQL Server</option>
-                    <option value="oci">Oracle</option>
-                </select>
+                <label>Type de Base de Données :</label>
+                <p>PostgreSQL</p>
             </div>
             <button class="Button Primary" type="submit">Vérifier la connexion</button>
         </form>

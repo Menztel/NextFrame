@@ -7,7 +7,7 @@ return [
     'password' => 'zszj uuvn jfrp curj',
     'encryption' => 'tls',
     'from' => [
-        'address' => 'from@Nexaframe.com',
-        'name' => 'Nexaframe'
+        'address' => 'from@Nextframe.com',
+        'name' => 'Nextframe'
     ]
 ];

@@ -46,7 +46,7 @@ class Export
         $zip = new \ZipArchive();
         if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
             // Ajout des fichiers du projet
-            $this->addFolderToZip('C:/Users/jerem/NexaFrame', $zip);
+            $this->addFolderToZip('C:/Users/jerem/NextFrame', $zip);
 
             // Ajout du fichier SQL dump
             $zip->addFile('exports/sql_dump.sql', 'sql_dump.sql');

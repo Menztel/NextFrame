@@ -10,7 +10,7 @@
 
 <body>
     <section class="form-container">
-        <h1>NexaFrame</h1>
+        <h1>NextFrame</h1>
         <h2>Mot de passe oublié</h2>
 
         <?php if (isset($error)) { ?>

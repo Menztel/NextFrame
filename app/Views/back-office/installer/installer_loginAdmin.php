@@ -10,7 +10,7 @@
 
 <body>
     <section class="form-container">
-        <h1 class="nexaframe">NexaFrame</h1>
+        <h1 class="nexaframe">NextFrame</h1>
         <h2>Connexion Admin</h2>
 
         <?php if (isset($error)) { ?>
